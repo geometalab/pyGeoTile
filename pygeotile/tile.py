@@ -2,12 +2,14 @@ import math
 from functools import reduce
 
 from .point import Point
+from .meta import Meta
 
 
-class Tile:
-    def __init__(self, tms_x=None, tms_y=None, zoom=None):
-        self._tms_x = tms_x
-        self._tms_y = tms_y
+class Tile(Meta):
+    def __init__(self, tile_size=256, earth_radius=6378137, zoom=None):
+        super().__init__(tile_size=tile_size, earth_radius=earth_radius)
+        self._tms_x = None
+        self._tms_y = None
         self._zoom = zoom
 
     @classmethod
@@ -25,7 +27,7 @@ class Tile:
 
     @classmethod
     def from_google(cls, google_x, google_y, zoom):
-        return cls(tms_x=google_x, tms_y=(google_y % (2 ** zoom - 1)), zoom=zoom)
+        return cls(tms_x=google_x, tms_y=abs(google_y - (2 ** zoom - 1)), zoom=zoom)
 
     @classmethod
     def for_pixels(cls, pixel_x, pixel_y):
@@ -43,6 +45,15 @@ class Tile:
     @property
     def tms(self):
         return self._tms_x, self._tms_y
+
+    @tms.setter
+    def tms(self, value):
+        if type(value) is tuple:
+            tms_x, tms_y = value
+            self._tms_x = tms_x
+            self._tms_y = tms_y
+        else:
+            raise TypeError('Arguments of TMS needs to a tuple of X and Y!')
 
     @property
     def quad_tree(self):
@@ -63,3 +74,13 @@ class Tile:
     def google(self):
         tms_x, tms_y = self.tms
         return tms_x, (2 ** self.zoom - 1) - tms_y
+
+    @property
+    def bounds(self):
+        tms_x, tms_y = self.tms
+        pixel_x_min, pixel_y_min = tms_x * self.tile_size, tms_y * self.tile_size
+        pixel_x_max, pixel_y_max = (tms_x + 1) * self.tile_size, (tms_y + 1) * self.tile_size
+
+        point_min = Point.from_pixel(pixel_x=pixel_x_min, pixel_y=pixel_y_min, zoom=self.zoom)
+        point_max = Point.from_pixel(pixel_x=pixel_x_max, pixel_y=pixel_y_max, zoom=self.zoom)
+        return point_min, point_max
