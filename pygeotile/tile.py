@@ -34,10 +34,11 @@ class Tile(Meta):
 
     @classmethod
     def for_pixels(cls, pixel_x, pixel_y, zoom):
-        point = Point.from_pixel(pixel_x=pixel_x, pixel_y=pixel_y)
-        tms_x = int(math.ceil(pixel_x / float(point.tile_size)) - 1)
-        tms_y = int(math.ceil(pixel_y / float(point.tile_size)) - 1)
-        return cls.from_tms(tms_x=tms_x, tms_y=tms_y, zoom=zoom)
+        tile = cls(zoom=zoom)
+        tms_x = int(math.ceil(pixel_x / float(tile.tile_size)) - 1)
+        tms_y = int(math.ceil(pixel_y / float(tile.tile_size)) - 1)
+        tile.tms = tms_x, tms_y
+        return tile
 
     @property
     def zoom(self):
