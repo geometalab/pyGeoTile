@@ -12,9 +12,9 @@ class Point(Meta):
         self._earth_radius = earth_radius
 
     @classmethod
-    def from_coordinates(cls, latitude=0.0, longitude=0.0, zoom=None):
+    def from_latitude_longitude(cls, latitude=0.0, longitude=0.0, zoom=None):
         point = cls(zoom=zoom)
-        point.latitude_longitude = (latitude, longitude)
+        point.latitude_longitude = latitude, longitude
         return point
 
     @classmethod
@@ -25,12 +25,12 @@ class Point(Meta):
         return point.from_meters(meter_x=meter_x, meter_y=meter_y, zoom=zoom)
 
     @classmethod
-    def from_meters(cls, meter_x=0, meter_y=0.0, zoom=None):
+    def from_meters(cls, meter_x=0.0, meter_y=0.0, zoom=None):
         point = cls(zoom=zoom)
         longitude = (meter_x / point.origin_shift) * 180.0
         latitude = (meter_y / point.origin_shift) * 180.0
-        latitude = 180 / math.pi * (2 * math.atan(math.exp(latitude * math.pi / 180.0)) - math.pi / 2.0)
-        return point.from_coordinates(latitude=latitude, longitude=longitude, zoom=zoom)
+        latitude = 180.0 / math.pi * (2 * math.atan(math.exp(latitude * math.pi / 180.0)) - math.pi / 2.0)
+        return point.from_latitude_longitude(latitude=latitude, longitude=longitude, zoom=zoom)
 
     @property
     def latitude_longitude(self):
@@ -48,19 +48,19 @@ class Point(Meta):
     @property
     def pixels(self):
         """Gets pixels of the EPSG:4326 pyramid by a specific zoom"""
+        factor = 180 / self.initial_resolution / 2**self.zoom
         latitude, longitude = self.latitude_longitude
-        pixel_x = (180 + latitude) / self.resolution
-        pixel_y = (90 + longitude) / self.resolution
-        return pixel_x, pixel_y
-
-    def _pixels_to_lat_lon(self, pixel_x=0, pixel_y=0, zoom=0):
-        pass
+        pixel_x = (180 + latitude) / factor
+        pixel_y = (90 + longitude) / factor
+        return int(round(pixel_x)), int(round(pixel_y))
 
     @property
     def meters(self):
         """Converts given lat/lon in WGS84 Datum to XY in Spherical Mercator EPSG:900913"""
         latitude, longitude = self.latitude_longitude
         meter_x = longitude * self.origin_shift / 180.0
-        meter_y = math.log(math.tan((90 + longitude) * math.pi / 360.0)) / (math.pi / 180.0)
+
+        #meter_y = math.log(math.atan(latitude * math.pi / 360 + math.pi / 4)) * self.origin_shift / math.pi
+        meter_y = math.log(math.tan((90.0 + latitude) * math.pi / 360.0)) / (math.pi / 180.0)
         meter_y = meter_y * self.origin_shift / 180.0
         return meter_x, meter_y

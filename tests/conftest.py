@@ -25,14 +25,27 @@ def chicago_pixel():
     return 34430575, 49899071
 
 
+@pytest.fixture(scope="session", autouse=True)
+def chicago_meters():
+    return -9757148.442088600, 5138517.444985110
+
+
+@pytest.fixture(scope="session", autouse=True)
 def chicago_pixel_bounds():
     return 34430464, 49899008, 34430720, 49899264
 
 
+@pytest.fixture(scope="session", autouse=True)
+def chicago_latitude_longitude():
+    return 41.84987191, -87.64995575
+
+
+@pytest.fixture(scope="session", autouse=True)
 def chicago_meter_bounds():
     return -9757186.660602748, 5138479.226470973, -9757110.223574463, 5138555.663499258
 
 
+@pytest.fixture(scope="session", autouse=True)
 def chicago_latitude_longitude_bounds():
     return 41.8496161693754, -87.65029907226562, 41.85012764855732, -87.64961242675781
 

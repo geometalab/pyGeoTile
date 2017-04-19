@@ -2,7 +2,7 @@ import math
 
 
 class Meta:
-    def __init__(self, tile_size=256, earth_radius=6378137, zoom=None):
+    def __init__(self, tile_size=256, earth_radius=6378137.0, zoom=None):
         self._zoom = zoom
         self._tile_size = tile_size
         self._earth_radius = earth_radius
@@ -27,13 +27,12 @@ class Meta:
 
     @property
     def origin_shift(self):
-        return 2 * math.pi * self.earth_radius / 2.0
+        return 2.0 * math.pi * self.earth_radius / 2.0
 
     @property
     def initial_resolution(self):
-        return 2 * math.pi * self.earth_radius / self.tile_size
+        return 2.0 * math.pi * self.earth_radius / float(self.tile_size)
 
     @property
     def resolution(self):
-        """Resolution (meters/pixel) for given zoom level (measured at Equator)"""
         return self.initial_resolution / (2 ** self.zoom)

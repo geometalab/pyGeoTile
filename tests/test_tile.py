@@ -1,5 +1,6 @@
 import pytest
 from pygeotile.tile import Tile
+from pygeotile.tile import Point
 
 
 @pytest.fixture(scope='module')
@@ -60,3 +61,21 @@ def test_cross_check(tms, google, quad_tree, zoom):
     assert tile.tms == tms
     assert tile.zoom == zoom
     assert tile.google == google
+
+
+def test_for_pixel(chicago_pixel, chicago_zoom, chicago_tms):
+    pixel_x, pixel_y = chicago_pixel
+
+    tile = Tile.for_pixels(pixel_x=pixel_x, pixel_y=pixel_y, zoom=chicago_zoom)
+
+    assert tile.tms == chicago_tms
+
+
+def test_for_meters(chicago_pixel, chicago_zoom, chicago_tms):
+    pixel_x, pixel_y = chicago_pixel
+    point = Point.from_pixel(pixel_x=pixel_x, pixel_y=pixel_y, zoom=chicago_zoom)
+    meter_x, meter_y = point.meters
+
+    tile = Tile.for_meters(meter_x=meter_x, meter_y=meter_y, zoom=chicago_zoom)
+
+    assert tile.tms == chicago_tms

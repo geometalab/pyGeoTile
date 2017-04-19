@@ -29,7 +29,7 @@ class Tile(Meta):
 
     @classmethod
     def from_google(cls, google_x, google_y, zoom):
-        tms_x, tms_y = (google_x, abs(google_y - (2 ** zoom - 1)))
+        tms_x, tms_y = (google_x, (2 ** zoom - 1) - google_y)
         return cls.from_tms(tms_x=tms_x, tms_y=tms_y, zoom=zoom)
 
     @classmethod
@@ -37,8 +37,14 @@ class Tile(Meta):
         tile = cls(zoom=zoom)
         tms_x = int(math.ceil(pixel_x / float(tile.tile_size)) - 1)
         tms_y = int(math.ceil(pixel_y / float(tile.tile_size)) - 1)
-        tile.tms = tms_x, tms_y
+        tile.tms = tms_x, (2 ** zoom - 1) - tms_y
         return tile
+
+    @classmethod
+    def for_meters(cls, meter_x, meter_y, zoom):
+        point = Point.from_meters(meter_x=meter_x, meter_y=meter_y, zoom=zoom)
+        pixel_x, pixel_y = point.pixels
+        return cls.for_pixels(pixel_x=pixel_x, pixel_y=pixel_y, zoom=zoom)
 
     @property
     def zoom(self):
