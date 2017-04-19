@@ -19,22 +19,25 @@ class Tile(Meta):
         tms_x, tmx_y = [reduce(lambda result, bit: (result << 1) | bit, bits, 0)
                         for bits in zip(*(reversed(divmod(digit, 2))
                                           for digit in (int(c) for c in str(quad_tree))))]
-        return cls(tms_x=tms_x, tms_y=(offset - tmx_y))
+        return cls.from_tms(tms_x=tms_x, tms_y=(offset - tmx_y), zoom=zoom)
 
     @classmethod
     def from_tms(cls, tms_x, tms_y, zoom):
-        return cls(tms_x=tms_x, tms_y=tms_y, zoom=zoom)
+        tile = cls(zoom=zoom)
+        tile.tms = tms_x, tms_y
+        return tile
 
     @classmethod
     def from_google(cls, google_x, google_y, zoom):
-        return cls(tms_x=google_x, tms_y=abs(google_y - (2 ** zoom - 1)), zoom=zoom)
+        tms_x, tms_y = (google_x, abs(google_y - (2 ** zoom - 1)))
+        return cls.from_tms(tms_x=tms_x, tms_y=tms_y, zoom=zoom)
 
     @classmethod
-    def for_pixels(cls, pixel_x, pixel_y):
+    def for_pixels(cls, pixel_x, pixel_y, zoom):
         point = Point.from_pixel(pixel_x=pixel_x, pixel_y=pixel_y)
         tms_x = int(math.ceil(pixel_x / float(point.tile_size)) - 1)
         tms_y = int(math.ceil(pixel_y / float(point.tile_size)) - 1)
-        return cls(tms_x=tms_x, tms_y=tms_y)
+        return cls.from_tms(tms_x=tms_x, tms_y=tms_y, zoom=zoom)
 
     @property
     def zoom(self):

@@ -4,26 +4,26 @@ from pygeotile.point import Point
 
 
 @pytest.fixture(scope='module')
-def coordinates():
+def latitude_longitude():
     return 47.0, 8.0
 
 
-def test_from_coordinates(coordinates):
-    latitude, longitude = coordinates
+def test_from_coordinates(latitude_longitude):
+    latitude, longitude = latitude_longitude
     point = Point.from_coordinates(latitude=latitude, longitude=longitude)
 
-    assert point.latitude_longitude == coordinates
+    assert point.latitude_longitude == latitude_longitude
 
 
-def test_from_meters(coordinates):
+def test_from_meters(latitude_longitude):
     meter_x = 890555.93
     meter_y = 5942074.07
 
     point = Point.from_meters(meter_x=meter_x, meter_y=meter_y)
     latitude, longitude = point.latitude_longitude
 
-    assert pytest.approx(latitude, 0.01) == coordinates[0]
-    assert pytest.approx(longitude, 0.01) == coordinates[1]
+    assert pytest.approx(latitude, 0.01) == latitude_longitude[0]
+    assert pytest.approx(longitude, 0.01) == latitude_longitude[1]
 
 
 def test_from_pixel():
