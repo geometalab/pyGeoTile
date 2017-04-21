@@ -16,10 +16,10 @@ class Tile(Meta):
     def from_quad_tree(cls, quad_tree):
         zoom = len(str(quad_tree))
         offset = int(math.pow(2, zoom)) - 1
-        tms_x, tmx_y = [reduce(lambda result, bit: (result << 1) | bit, bits, 0)
-                        for bits in zip(*(reversed(divmod(digit, 2))
-                                          for digit in (int(c) for c in str(quad_tree))))]
-        return cls.from_tms(tms_x=tms_x, tms_y=(offset - tmx_y), zoom=zoom)
+        google_x, google_y = [reduce(lambda result, bit: (result << 1) | bit, bits, 0)
+                              for bits in zip(*(reversed(divmod(digit, 2))
+                                                for digit in (int(c) for c in str(quad_tree))))]
+        return cls.from_tms(tms_x=google_x, tms_y=(offset - google_y), zoom=zoom)
 
     @classmethod
     def from_tms(cls, tms_x, tms_y, zoom):
@@ -87,9 +87,13 @@ class Tile(Meta):
 
     @property
     def bounds(self):
-        tms_x, tms_y = self.tms
-        pixel_x_min, pixel_y_min = tms_x * self.tile_size, tms_y * self.tile_size
-        pixel_x_max, pixel_y_max = (tms_x + 1) * self.tile_size, (tms_y + 1) * self.tile_size
+        # tms_x, tms_y = self.tms
+        # pixel_x_min, pixel_y_min = tms_x * self.tile_size, tms_y * self.tile_size
+        # pixel_x_max, pixel_y_max = (tms_x + 1) * self.tile_size, (tms_y + 1) * self.tile_size
+
+        google_x, google_y = self.google
+        pixel_x_min, pixel_y_min = google_x * self.tile_size, google_y * self.tile_size
+        pixel_x_max, pixel_y_max = (google_x + 1) * self.tile_size, (google_y + 1) * self.tile_size
 
         point_min = Point.from_pixel(pixel_x=pixel_x_min, pixel_y=pixel_y_min, zoom=self.zoom)
         point_max = Point.from_pixel(pixel_x=pixel_x_max, pixel_y=pixel_y_max, zoom=self.zoom)
