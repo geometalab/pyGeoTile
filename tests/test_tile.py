@@ -79,3 +79,12 @@ def test_for_meters(chicago_pixel, chicago_zoom, chicago_tms):
     tile = Tile.for_meters(meter_x=meter_x, meter_y=meter_y, zoom=chicago_zoom)
 
     assert tile.tms == chicago_tms
+
+
+def test_pixel_bounds(chicago_quad_tree, chicago_pixel_bounds):
+    tile = Tile.from_quad_tree(chicago_quad_tree)
+
+    point_min, point_max = tile.bounds
+
+    assert chicago_pixel_bounds[0] == point_min.pixels
+    assert chicago_pixel_bounds[1] == point_max.pixels

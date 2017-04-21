@@ -52,15 +52,13 @@ class Point(Meta):
         meter_x, meter_y = self.meters
         pixel_x = (meter_x + self.origin_shift) / self.resolution
         pixel_y = (meter_y - self.origin_shift) / self.resolution
-        return abs(int(round(pixel_x))), abs(int(round(pixel_y)))
+        return abs(round(pixel_x)), abs(round(pixel_y))
 
     @property
     def meters(self):
         """Converts given lat/lon in WGS84 Datum to XY in Spherical Mercator EPSG:900913"""
         latitude, longitude = self.latitude_longitude
         meter_x = longitude * self.origin_shift / 180.0
-
-        # meter_y = math.log(math.atan(latitude * math.pi / 360 + math.pi / 4)) * self.origin_shift / math.pi
         meter_y = math.log(math.tan((90.0 + latitude) * math.pi / 360.0)) / (math.pi / 180.0)
         meter_y = meter_y * self.origin_shift / 180.0
         return meter_x, meter_y
@@ -75,3 +73,11 @@ class Point(Meta):
         if pixel_y > half_size:
             meter_y *= -1
         return meter_x, meter_y
+
+    def _signed_origin_shift(self, meters):
+        meter_x, meter_y = meters
+        return self.origin_shift * self._sign(meter_x), self.origin_shift * self._sign(meter_y)
+
+    @staticmethod
+    def _sign(number):
+        return (number >= 0) - (number < 0)

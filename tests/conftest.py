@@ -32,7 +32,7 @@ def chicago_meters():
 
 @pytest.fixture(scope="session", autouse=True)
 def chicago_pixel_bounds():
-    return 34430464, 49899008, 34430720, 49899264
+    return (34430464, 49899008), (34430720, 49899264)
 
 
 @pytest.fixture(scope="session", autouse=True)
@@ -42,12 +42,12 @@ def chicago_latitude_longitude():
 
 @pytest.fixture(scope="session", autouse=True)
 def chicago_meter_bounds():
-    return -9757186.660602748, 5138479.226470973, -9757110.223574463, 5138555.663499258
+    return (-9757186.660602748, 5138479.226470973), (-9757110.223574463, 5138555.663499258)
 
 
 @pytest.fixture(scope="session", autouse=True)
 def chicago_latitude_longitude_bounds():
-    return 41.8496161693754, -87.65029907226562, 41.85012764855732, -87.64961242675781
+    return (41.8496161693754, -87.65029907226562), (41.85012764855732, -87.64961242675781)
 
 
 @pytest.fixture(scope="session", autouse=True)
