@@ -22,6 +22,7 @@ class Point(Meta):
         point = cls(zoom=zoom)
         meter_x = pixel_x * point.resolution - point.origin_shift
         meter_y = pixel_y * point.resolution - point.origin_shift
+        meter_x, meter_y = point._sign_meters(meters=(meter_x, meter_y), pixels=(pixel_x, pixel_y))
         return point.from_meters(meter_x=meter_x, meter_y=meter_y, zoom=zoom)
 
     @classmethod
@@ -48,11 +49,10 @@ class Point(Meta):
     @property
     def pixels(self):
         """Gets pixels of the EPSG:4326 pyramid by a specific zoom"""
-        factor = 180 / self.initial_resolution / 2**self.zoom
-        latitude, longitude = self.latitude_longitude
-        pixel_x = (180 + latitude) / factor
-        pixel_y = (90 + longitude) / factor
-        return int(round(pixel_x)), int(round(pixel_y))
+        meter_x, meter_y = self.meters
+        pixel_x = (meter_x + self.origin_shift) / self.resolution
+        pixel_y = (meter_y - self.origin_shift) / self.resolution
+        return abs(int(round(pixel_x))), abs(int(round(pixel_y)))
 
     @property
     def meters(self):
@@ -60,7 +60,18 @@ class Point(Meta):
         latitude, longitude = self.latitude_longitude
         meter_x = longitude * self.origin_shift / 180.0
 
-        #meter_y = math.log(math.atan(latitude * math.pi / 360 + math.pi / 4)) * self.origin_shift / math.pi
+        # meter_y = math.log(math.atan(latitude * math.pi / 360 + math.pi / 4)) * self.origin_shift / math.pi
         meter_y = math.log(math.tan((90.0 + latitude) * math.pi / 360.0)) / (math.pi / 180.0)
         meter_y = meter_y * self.origin_shift / 180.0
+        return meter_x, meter_y
+
+    def _sign_meters(self, meters, pixels):
+        half_size = int((self.tile_size * 2 ** self.zoom) / 2)
+        pixel_x, pixel_y = pixels
+        meter_x, meter_y = meters
+        meter_x, meter_y = abs(meter_x), abs(meter_y)
+        if pixel_x < half_size:
+            meter_x *= -1
+        if pixel_y > half_size:
+            meter_y *= -1
         return meter_x, meter_y
