@@ -4,10 +4,9 @@ from .meta import Meta
 
 class Point(Meta):
     def __init__(self, tile_size=256, earth_radius=6378137.0, zoom=None):
-        super().__init__(tile_size=tile_size, earth_radius=earth_radius)
+        super().__init__(tile_size=tile_size, earth_radius=earth_radius, zoom=zoom)
         self._latitude = None
         self._longitude = None
-        self._zoom = zoom
         self._tile_size = tile_size
         self._earth_radius = earth_radius
 
