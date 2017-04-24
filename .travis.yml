@@ -3,5 +3,10 @@ python:
   - "3.4"
   - "3.5"
   - "3.6"
+  - "pypy3" # Pypy3 2.4.0
+  - "3.5-dev" # 3.5 development branch
+  - "3.6-dev" # 3.6 development branch
+  - "3.7-dev" # 3.7 development branch
+  - "nightly" # currently points to 3.7-dev
 install: "pip install -r requirements.txt"
 script: py.test
