@@ -87,8 +87,8 @@ def test_pixel_bounds_chicago(chicago_quad_tree, chicago_pixel_bounds):
 
     point_min, point_max = tile.bounds
 
-    assert chicago_pixel_bounds[0] == point_min.pixels
-    assert chicago_pixel_bounds[1] == point_max.pixels
+    assert chicago_pixel_bounds[0] == point_min.pixels(zoom=tile.zoom)
+    assert chicago_pixel_bounds[1] == point_max.pixels(zoom=tile.zoom)
 
 
 @pytest.mark.parametrize("tms_x, tms_y, zoom, expected_min, expected_max", [
@@ -114,15 +114,6 @@ def test_for_latitude_longitude(chicago_latitude_longitude, chicago_zoom, chicag
 
 def test_for_point(chicago_latitude_longitude, chicago_zoom, chicago_tms):
     latitude, longitude = chicago_latitude_longitude
-    point = Point.from_latitude_longitude(latitude=latitude, longitude=longitude, zoom=chicago_zoom)
-    tile = Tile.for_point(point=point)
-
-    assert tile.tms == chicago_tms
-    assert tile.zoom == chicago_zoom
-
-
-def test_for_point_zoom(chicago_latitude_longitude, chicago_zoom, chicago_tms):
-    latitude, longitude = chicago_latitude_longitude
     point = Point.from_latitude_longitude(latitude=latitude, longitude=longitude)
     tile = Tile.for_point(point=point, zoom=chicago_zoom)
 
@@ -143,3 +134,18 @@ def test_tms_setter_exception():
     with pytest.raises(Exception) as exception:
         tile.tms = 10
     assert 'Arguments of TMS needs to a tuple of X and Y!' in str(exception.value)
+
+
+def test_zoom_exception():
+    tile = Tile()
+    with pytest.raises(Exception) as exception:
+        _ = tile.zoom
+    assert 'Zoom is not set!' in str(exception.value)
+
+
+def test_zoom_setter():
+    tile = Tile(zoom=19)
+    assert tile.zoom == 19
+
+    tile.zoom = 20
+    assert tile.zoom == 20
