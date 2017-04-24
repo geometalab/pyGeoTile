@@ -90,3 +90,15 @@ def test_pixel_bounds_chicago(chicago_quad_tree, chicago_pixel_bounds):
     assert chicago_pixel_bounds[1] == point_max.pixels
 
 
+@pytest.mark.parametrize("tms_x, tms_y, zoom, expected_min, expected_max", [
+    (0, 1, 1, (0.0, -180.0), (85.05, 0.0)),
+    (1, 1, 1, (0.0, 0.0), (85.05, 180.0)),
+    (0, 0, 1, (-85.05, -180.0), (0.0, 0.0)),
+    (1, 0, 1, (-85.05, 0.0), (0.0, 180.0)),
+])
+def test_tile_bounds(tms_x, tms_y, zoom, expected_min, expected_max):
+    tile = Tile.from_tms(tms_x=tms_x, tms_y=tms_y, zoom=zoom)
+    point_min, point_max = tile.bounds
+
+    assert point_min.latitude_longitude == pytest.approx(expected_min, abs=0.1)
+    assert point_max.latitude_longitude == pytest.approx(expected_max, abs=0.1)

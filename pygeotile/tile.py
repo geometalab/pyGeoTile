@@ -33,6 +33,13 @@ class Tile(Meta):
         return cls.from_tms(tms_x=tms_x, tms_y=tms_y, zoom=zoom)
 
     @classmethod
+    def for_point(cls, point, zoom=None):
+        pixel_x, pixel_y = point.pixels
+        if zoom is None:
+            zoom = point.zoom
+        return cls.for_pixels(pixel_x=pixel_x, pixel_y=pixel_y, zoom=zoom)
+
+    @classmethod
     def for_pixels(cls, pixel_x, pixel_y, zoom):
         tile = cls(zoom=zoom)
         tms_x = int(math.ceil(pixel_x / float(tile.tile_size)) - 1)
@@ -43,6 +50,12 @@ class Tile(Meta):
     @classmethod
     def for_meters(cls, meter_x, meter_y, zoom):
         point = Point.from_meters(meter_x=meter_x, meter_y=meter_y, zoom=zoom)
+        pixel_x, pixel_y = point.pixels
+        return cls.for_pixels(pixel_x=pixel_x, pixel_y=pixel_y, zoom=zoom)
+
+    @classmethod
+    def for_latitude_longitude(cls, latitude, longitude, zoom):
+        point = Point.from_latitude_longitude(latitude=latitude, longitude=longitude, zoom=zoom)
         pixel_x, pixel_y = point.pixels
         return cls.for_pixels(pixel_x=pixel_x, pixel_y=pixel_y, zoom=zoom)
 
@@ -87,14 +100,10 @@ class Tile(Meta):
 
     @property
     def bounds(self):
-        # tms_x, tms_y = self.tms
-        # pixel_x_min, pixel_y_min = tms_x * self.tile_size, tms_y * self.tile_size
-        # pixel_x_max, pixel_y_max = (tms_x + 1) * self.tile_size, (tms_y + 1) * self.tile_size
-
         google_x, google_y = self.google
-        pixel_x_min, pixel_y_min = google_x * self.tile_size, google_y * self.tile_size
-        pixel_x_max, pixel_y_max = (google_x + 1) * self.tile_size, (google_y + 1) * self.tile_size
+        pixel_x_west, pixel_y_north = google_x * self.tile_size, google_y * self.tile_size
+        pixel_x_east, pixel_y_south = (google_x + 1) * self.tile_size, (google_y + 1) * self.tile_size
 
-        point_min = Point.from_pixel(pixel_x=pixel_x_min, pixel_y=pixel_y_min, zoom=self.zoom)
-        point_max = Point.from_pixel(pixel_x=pixel_x_max, pixel_y=pixel_y_max, zoom=self.zoom)
+        point_min = Point.from_pixel(pixel_x=pixel_x_west, pixel_y=pixel_y_south, zoom=self.zoom)
+        point_max = Point.from_pixel(pixel_x=pixel_x_east, pixel_y=pixel_y_north, zoom=self.zoom)
         return point_min, point_max

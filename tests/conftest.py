@@ -32,7 +32,7 @@ def chicago_meters():
 
 @pytest.fixture(scope="session", autouse=True)
 def chicago_pixel_bounds():
-    return (34430464, 49899008), (34430720, 49899264)
+    return (34430464, 49899264), (34430720, 49899008)
 
 
 @pytest.fixture(scope="session", autouse=True)
