@@ -31,6 +31,14 @@ print('QuadTree: ', tile.quad_tree)  # QuadTree:  0302222310303211330
 print('Google: ', tile.google)  # Google:  (134494, 194918)
 ```
 
+## Installation
+To install pyGeoTile, simply:
+```bash
+pip install pyGeoTile
+
+```
+Requests officially supports Python 3.3–3.7, and PyPy3.
+
 ## Notes
 This repository is inspired from:
  - Tiles à la Google Maps: http://www.maptiler.org/google-maps-coordinates-tile-bounds-projection/
