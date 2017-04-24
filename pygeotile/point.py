@@ -29,7 +29,7 @@ class Point(Meta):
 
     @classmethod
     def from_meters(cls, meter_x=0.0, meter_y=0.0, zoom=None):
-        """Creates a point from X Y meters in Spherical Mercator EPSG:900913"""
+        """Creates a point from X Y Z (zoom) meters in Spherical Mercator EPSG:900913"""
         point = cls(zoom=zoom)
         longitude = (meter_x / point.origin_shift) * 180.0
         latitude = (meter_y / point.origin_shift) * 180.0
