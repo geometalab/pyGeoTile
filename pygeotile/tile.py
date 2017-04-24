@@ -7,7 +7,7 @@ from .meta import Meta
 
 class Tile(Meta):
     def __init__(self, tile_size=256, earth_radius=6378137.0, zoom=None):
-        super().__init__(tile_size=tile_size, earth_radius=earth_radius)
+        super(Tile, self).__init__(tile_size=tile_size, earth_radius=earth_radius)
         self._tms_x = None
         self._tms_y = None
         self._zoom = zoom
