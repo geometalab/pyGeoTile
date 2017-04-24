@@ -31,7 +31,7 @@ def test_from_google(tms, google, zoom):
     assert tile.tms == tms
 
 
-def test_from_google_1():
+def test_from_google_tasmania():
     google_x, google_y = 1853, 1289
     tms_tasmania = 1853, 758
 
@@ -61,9 +61,10 @@ def test_cross_check(tms, google, quad_tree, zoom):
     assert tile.tms == tms
     assert tile.zoom == zoom
     assert tile.google == google
+    assert tile.quad_tree == quad_tree
 
 
-def test_for_pixel(chicago_pixel, chicago_zoom, chicago_tms):
+def test_for_pixel_chicago(chicago_pixel, chicago_zoom, chicago_tms):
     pixel_x, pixel_y = chicago_pixel
 
     tile = Tile.for_pixels(pixel_x=pixel_x, pixel_y=pixel_y, zoom=chicago_zoom)
@@ -71,7 +72,7 @@ def test_for_pixel(chicago_pixel, chicago_zoom, chicago_tms):
     assert tile.tms == chicago_tms
 
 
-def test_for_meters(chicago_pixel, chicago_zoom, chicago_tms):
+def test_for_meters_chicago(chicago_pixel, chicago_zoom, chicago_tms):
     pixel_x, pixel_y = chicago_pixel
     point = Point.from_pixel(pixel_x=pixel_x, pixel_y=pixel_y, zoom=chicago_zoom)
     meter_x, meter_y = point.meters
@@ -102,3 +103,43 @@ def test_tile_bounds(tms_x, tms_y, zoom, expected_min, expected_max):
 
     assert point_min.latitude_longitude == pytest.approx(expected_min, abs=0.1)
     assert point_max.latitude_longitude == pytest.approx(expected_max, abs=0.1)
+
+
+def test_for_latitude_longitude(chicago_latitude_longitude, chicago_zoom, chicago_tms):
+    latitude, longitude = chicago_latitude_longitude
+    tile = Tile.for_latitude_longitude(latitude=latitude, longitude=longitude, zoom=chicago_zoom)
+
+    assert tile.tms == chicago_tms
+
+
+def test_for_point(chicago_latitude_longitude, chicago_zoom, chicago_tms):
+    latitude, longitude = chicago_latitude_longitude
+    point = Point.from_latitude_longitude(latitude=latitude, longitude=longitude, zoom=chicago_zoom)
+    tile = Tile.for_point(point=point)
+
+    assert tile.tms == chicago_tms
+    assert tile.zoom == chicago_zoom
+
+
+def test_for_point_zoom(chicago_latitude_longitude, chicago_zoom, chicago_tms):
+    latitude, longitude = chicago_latitude_longitude
+    point = Point.from_latitude_longitude(latitude=latitude, longitude=longitude)
+    tile = Tile.for_point(point=point, zoom=chicago_zoom)
+
+    assert tile.tms == chicago_tms
+    assert tile.zoom == chicago_zoom
+
+
+def test_tms_setter(chicago_tms):
+    tile = Tile()
+    tile.tms = chicago_tms
+
+    assert tile.tms == chicago_tms
+
+
+def test_tms_setter_exception():
+    tile = Tile()
+
+    with pytest.raises(Exception) as exception:
+        tile.tms = 10
+    assert 'Arguments of TMS needs to a tuple of X and Y!' in str(exception.value)

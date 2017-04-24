@@ -34,10 +34,10 @@ class Tile(Meta):
 
     @classmethod
     def for_point(cls, point, zoom=None):
-        pixel_x, pixel_y = point.pixels
+        latitude, longitude = point.latitude_longitude
         if zoom is None:
             zoom = point.zoom
-        return cls.for_pixels(pixel_x=pixel_x, pixel_y=pixel_y, zoom=zoom)
+        return cls.for_latitude_longitude(latitude=latitude, longitude=longitude, zoom=zoom)
 
     @classmethod
     def for_pixels(cls, pixel_x, pixel_y, zoom):
@@ -58,12 +58,6 @@ class Tile(Meta):
         point = Point.from_latitude_longitude(latitude=latitude, longitude=longitude, zoom=zoom)
         pixel_x, pixel_y = point.pixels
         return cls.for_pixels(pixel_x=pixel_x, pixel_y=pixel_y, zoom=zoom)
-
-    @property
-    def zoom(self):
-        if not self._zoom:
-            raise TypeError('Zoom is not set!')
-        return self._zoom
 
     @property
     def tms(self):

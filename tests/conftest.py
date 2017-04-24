@@ -36,11 +36,6 @@ def chicago_pixel_bounds():
 
 
 @pytest.fixture(scope="session", autouse=True)
-def chicago_latitude_longitude():
-    return 41.84987191, -87.64995575
-
-
-@pytest.fixture(scope="session", autouse=True)
 def chicago_meter_bounds():
     return (-9757186.660602748, 5138479.226470973), (-9757110.223574463, 5138555.663499258)
 

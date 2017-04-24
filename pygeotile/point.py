@@ -73,11 +73,3 @@ class Point(Meta):
         if pixel_y > half_size:
             meter_y *= -1
         return meter_x, meter_y
-
-    def _signed_origin_shift(self, meters):
-        meter_x, meter_y = meters
-        return self.origin_shift * self._sign(meter_x), self.origin_shift * self._sign(meter_y)
-
-    @staticmethod
-    def _sign(number):
-        return (number >= 0) - (number < 0)
