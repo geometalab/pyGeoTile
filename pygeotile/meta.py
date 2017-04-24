@@ -2,20 +2,9 @@ import math
 
 
 class Meta:
-    def __init__(self, tile_size=256, earth_radius=6378137.0, zoom=None):
-        self._zoom = zoom
-        self._tile_size = tile_size
-        self._earth_radius = earth_radius
-
-    @property
-    def zoom(self):
-        if not self._zoom:
-            raise TypeError('Zoom is not set!')
-        return self._zoom
-
-    @zoom.setter
-    def zoom(self, zoom):
-        self._zoom = zoom
+    def __init__(self):
+        self._tile_size = 256
+        self._earth_radius = 6378137.0
 
     @property
     def earth_radius(self):
@@ -33,6 +22,5 @@ class Meta:
     def initial_resolution(self):
         return 2.0 * math.pi * self.earth_radius / float(self.tile_size)
 
-    @property
-    def resolution(self):
-        return self.initial_resolution / (2 ** self.zoom)
+    def resolution(self, zoom):
+        return self.initial_resolution / (2 ** zoom)

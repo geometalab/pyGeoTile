@@ -6,10 +6,11 @@ from .meta import Meta
 
 
 class Tile(Meta):
-    def __init__(self, tile_size=256, earth_radius=6378137.0, zoom=None):
-        super().__init__(tile_size=tile_size, earth_radius=earth_radius, zoom=zoom)
-        self._tms_x = None
-        self._tms_y = None
+    def __init__(self, tms_x=None, tms_y=None, zoom=None):
+        super().__init__()
+        self._tms_x = tms_x
+        self._tms_y = tms_y
+        self._zoom = zoom
 
     @classmethod
     def from_quad_tree(cls, quad_tree):
@@ -19,51 +20,50 @@ class Tile(Meta):
         google_x, google_y = [reduce(lambda result, bit: (result << 1) | bit, bits, 0)
                               for bits in zip(*(reversed(divmod(digit, 2))
                                                 for digit in (int(c) for c in str(quad_tree))))]
-        return cls.from_tms(tms_x=google_x, tms_y=(offset - google_y), zoom=zoom)
+        return cls(tms_x=google_x, tms_y=(offset - google_y), zoom=zoom)
 
     @classmethod
     def from_tms(cls, tms_x, tms_y, zoom):
         """Creates a tile from Tile Map Service (TMS) X Y and zoom"""
-        tile = cls(zoom=zoom)
-        tile.tms = tms_x, tms_y
-        return tile
+        return cls(tms_x=tms_x, tms_y=tms_y, zoom=zoom)
 
     @classmethod
-    def from_google(cls, google_x, google_y, zoom):
+    def from_google(cls, google_x, google_y, zoom=None):
         """Creates a tile from Google format X Y and zoom"""
-        tms_x, tms_y = (google_x, (2 ** zoom - 1) - google_y)
-        return cls.from_tms(tms_x=tms_x, tms_y=tms_y, zoom=zoom)
+        tile = cls(zoom=zoom)
+        tile.tms = (google_x, (2 ** tile.zoom - 1) - google_y)
+        return tile
 
     @classmethod
     def for_point(cls, point, zoom=None):
         """Creates a tile for given point"""
         latitude, longitude = point.latitude_longitude
-        if zoom is None:
-            zoom = point.zoom
         return cls.for_latitude_longitude(latitude=latitude, longitude=longitude, zoom=zoom)
 
     @classmethod
-    def for_pixels(cls, pixel_x, pixel_y, zoom):
+    def for_pixels(cls, pixel_x, pixel_y, zoom=None):
         """Creates a tile from pixels X Y Z (zoom) in pyramid"""
         tile = cls(zoom=zoom)
         tms_x = int(math.ceil(pixel_x / float(tile.tile_size)) - 1)
         tms_y = int(math.ceil(pixel_y / float(tile.tile_size)) - 1)
-        tile.tms = tms_x, (2 ** zoom - 1) - tms_y
+        tile.tms = tms_x, (2 ** tile.zoom - 1) - tms_y
         return tile
 
     @classmethod
-    def for_meters(cls, meter_x, meter_y, zoom):
+    def for_meters(cls, meter_x, meter_y, zoom=None):
         """Creates a tile from X Y meters in Spherical Mercator EPSG:900913"""
-        point = Point.from_meters(meter_x=meter_x, meter_y=meter_y, zoom=zoom)
-        pixel_x, pixel_y = point.pixels
-        return cls.for_pixels(pixel_x=pixel_x, pixel_y=pixel_y, zoom=zoom)
+        tile = cls(zoom=zoom)
+        point = Point.from_meters(meter_x=meter_x, meter_y=meter_y)
+        pixel_x, pixel_y = point.pixels(zoom=zoom)
+        return tile.for_pixels(pixel_x=pixel_x, pixel_y=pixel_y, zoom=zoom)
 
     @classmethod
-    def for_latitude_longitude(cls, latitude, longitude, zoom):
+    def for_latitude_longitude(cls, latitude, longitude, zoom=None):
         """Creates a tile from lat/lon in WGS84"""
-        point = Point.from_latitude_longitude(latitude=latitude, longitude=longitude, zoom=zoom)
-        pixel_x, pixel_y = point.pixels
-        return cls.for_pixels(pixel_x=pixel_x, pixel_y=pixel_y, zoom=zoom)
+        tile = cls(zoom=zoom)
+        point = Point.from_latitude_longitude(latitude=latitude, longitude=longitude)
+        pixel_x, pixel_y = point.pixels(zoom=tile.zoom)
+        return tile.for_pixels(pixel_x=pixel_x, pixel_y=pixel_y, zoom=zoom)
 
     @property
     def tms(self):
@@ -112,3 +112,13 @@ class Tile(Meta):
         point_min = Point.from_pixel(pixel_x=pixel_x_west, pixel_y=pixel_y_south, zoom=self.zoom)
         point_max = Point.from_pixel(pixel_x=pixel_x_east, pixel_y=pixel_y_north, zoom=self.zoom)
         return point_min, point_max
+
+    @property
+    def zoom(self):
+        if not self._zoom:
+            raise TypeError('Zoom is not set!')
+        return self._zoom
+
+    @zoom.setter
+    def zoom(self, zoom):
+        self._zoom = zoom

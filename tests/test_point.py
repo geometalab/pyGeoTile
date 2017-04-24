@@ -32,7 +32,7 @@ def test_from_pixel_chicago(chicago_latitude_longitude, chicago_pixel, chicago_z
 
     point = Point.from_pixel(pixel_x=pixel_x, pixel_y=pixel_y, zoom=chicago_zoom)
 
-    assert point.pixels == chicago_pixel
+    assert point.pixels(zoom=chicago_zoom) == chicago_pixel
     assert point.latitude_longitude == pytest.approx(chicago_latitude_longitude, abs=0.2)
 
 
@@ -51,7 +51,7 @@ def test_pixels_to_meters(pixel_x, pixel_y, zoom, expected):
     point = Point.from_pixel(pixel_x=pixel_x, pixel_y=pixel_y, zoom=zoom)
 
     assert point.meters == pytest.approx(expected, abs=0.1)
-    assert point.pixels == (pixel_x, pixel_y)
+    assert point.pixels(zoom=zoom) == (pixel_x, pixel_y)
 
 
 @pytest.mark.parametrize("pixel_x, pixel_y,zoom, expected", [
@@ -69,22 +69,22 @@ def test_pixels_to_latitude_longitude(pixel_x, pixel_y, zoom, expected):
     point = Point.from_pixel(pixel_x=pixel_x, pixel_y=pixel_y, zoom=zoom)
 
     assert point.latitude_longitude == pytest.approx(expected, abs=0.1)
-    assert point.pixels == (pixel_x, pixel_y)
+    assert point.pixels(zoom=zoom) == (pixel_x, pixel_y)
 
 
-@pytest.mark.parametrize("meter_x, meter_y,zoom, expected", [
-    (-origin_shift, origin_shift, 1, (85.05, -180.0)),
-    (0, origin_shift, 1, (85.05, 0)),
-    (origin_shift, origin_shift, 1, (85.05, 180.0)),
-    (-origin_shift, 0, 1, (0, -180.0)),
-    (0, 0, 1, (0.0, 0.0)),
-    (origin_shift, 0, 1, (0.0, 180.0)),
-    (-origin_shift, -origin_shift, 1, (-85.05, -180.0)),
-    (0, -origin_shift, 1, (-85.05, 0.0)),
-    (origin_shift, -origin_shift, 1, (-85.05, 180.0)),
+@pytest.mark.parametrize("meter_x, meter_y, expected", [
+    (-origin_shift, origin_shift, (85.05, -180.0)),
+    (0, origin_shift, (85.05, 0)),
+    (origin_shift, origin_shift, (85.05, 180.0)),
+    (-origin_shift, 0, (0, -180.0)),
+    (0, 0, (0.0, 0.0)),
+    (origin_shift, 0, (0.0, 180.0)),
+    (-origin_shift, -origin_shift, (-85.05, -180.0)),
+    (0, -origin_shift, (-85.05, 0.0)),
+    (origin_shift, -origin_shift, (-85.05, 180.0)),
 ])
-def test_meters_to_pixels(meter_x, meter_y, zoom, expected):
-    point = Point.from_meters(meter_x=meter_x, meter_y=meter_y, zoom=zoom)
+def test_meters_to_pixels(meter_x, meter_y, expected):
+    point = Point.from_meters(meter_x=meter_x, meter_y=meter_y)
 
     assert point.latitude_longitude == pytest.approx(expected, abs=0.1)
     assert point.meters == pytest.approx((meter_x, meter_y), abs=0.1)
