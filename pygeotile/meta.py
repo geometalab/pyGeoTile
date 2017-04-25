@@ -1,7 +1,8 @@
 import math
+from collections import namedtuple
 
 
-class Meta:
+class Meta(namedtuple):
     def __init__(self):
         self._tile_size = 256
         self._earth_radius = 6378137.0
