@@ -25,24 +25,15 @@ Point
 .. automodule:: pygeotile.point
    :members:
 
-.. autoclass:: Point
-   :members:
-
 
 Tile
 ----
 .. automodule:: pygeotile.tile
    :members:
 
-.. autoclass:: Tile
-   :members:
-
 
 Meta
 ----
 .. automodule:: pygeotile.meta
-   :members:
-
-.. autoclass:: Meta
    :members:
 
