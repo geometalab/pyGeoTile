@@ -30,10 +30,3 @@ Tile
 ----
 .. automodule:: pygeotile.tile
    :members:
-
-
-Meta
-----
-.. automodule:: pygeotile.meta
-   :members:
-
