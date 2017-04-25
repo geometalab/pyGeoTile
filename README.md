@@ -6,6 +6,8 @@ Python package to handle tiles and points of the different projections, in parti
 The package pyGeoTile consist of two main classes, namely Point and Tile.
 As already mentioned they allow you to convert various geo projections.
 
+The full API documentation could be found under http://pygeotile.readthedocs.io
+
 ### Point
 Example of the class Point.
 ```python

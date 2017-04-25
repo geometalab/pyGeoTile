@@ -4,6 +4,7 @@ Usage
 The package pyGeoTile consist of two main classes, namely Point and
 Tile. As already mentioned they allow you to convert various geo
 projections.
+The full API documentation could be found under http://pygeotile.readthedocs.io
 
 
 Point
