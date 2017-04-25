@@ -12,6 +12,6 @@ setup(
     author='Samuel Kurath',
     author_email='geometalab@hsr.ch',
     url='https://github.com/geometalab/pyGeoTile',
-    license='',
+    license='MIT',
     packages=find_packages(exclude=('tests', 'docs'))
 )
