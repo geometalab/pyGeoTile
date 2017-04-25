@@ -6,6 +6,8 @@ BasePoint = namedtuple('BasePoint', 'latitude longitude')
 
 
 class Point(BasePoint):
+    """Immutable Point class"""
+
     @classmethod
     def from_latitude_longitude(cls, latitude=0.0, longitude=0.0):
         """Creates a point from lat/lon in WGS84"""

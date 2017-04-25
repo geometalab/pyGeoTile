@@ -9,6 +9,8 @@ BaseTile = namedtuple('BaseTile', 'tms_x tms_y zoom')
 
 
 class Tile(BaseTile):
+    """Immutable Tile class"""
+
     @classmethod
     def from_quad_tree(cls, quad_tree):
         """Creates a tile from a Microsoft QuadTree"""
