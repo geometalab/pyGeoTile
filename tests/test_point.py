@@ -88,17 +88,3 @@ def test_meters_to_pixels(meter_x, meter_y, expected):
 
     assert point.latitude_longitude == pytest.approx(expected, abs=0.1)
     assert point.meters == pytest.approx((meter_x, meter_y), abs=0.1)
-
-
-def test_latitude_longitude_setter():
-    point = Point()
-    latitude_longitude = (48.0, 8.0)
-    point.latitude_longitude = latitude_longitude
-    assert point.latitude_longitude == latitude_longitude
-
-
-def test_latitude_longitude_setter_exception():
-    point = Point()
-    with pytest.raises(Exception) as exception:
-        point.latitude_longitude = 10
-    assert 'Arguments of coordinates needs to a tuple of Latitude and Longitude!' in str(exception.value)

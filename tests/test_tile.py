@@ -119,33 +119,3 @@ def test_for_point(chicago_latitude_longitude, chicago_zoom, chicago_tms):
 
     assert tile.tms == chicago_tms
     assert tile.zoom == chicago_zoom
-
-
-def test_tms_setter(chicago_tms):
-    tile = Tile()
-    tile.tms = chicago_tms
-
-    assert tile.tms == chicago_tms
-
-
-def test_tms_setter_exception():
-    tile = Tile()
-
-    with pytest.raises(Exception) as exception:
-        tile.tms = 10
-    assert 'Arguments of TMS needs to a tuple of X and Y!' in str(exception.value)
-
-
-def test_zoom_exception():
-    tile = Tile()
-    with pytest.raises(Exception) as exception:
-        _ = tile.zoom
-    assert 'Zoom is not set!' in str(exception.value)
-
-
-def test_zoom_setter():
-    tile = Tile(zoom=19)
-    assert tile.zoom == 19
-
-    tile.zoom = 20
-    assert tile.zoom == 20
