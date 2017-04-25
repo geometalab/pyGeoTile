@@ -1,17 +1,14 @@
 import math
 from functools import reduce
+from collections import namedtuple
 
 from .point import Point
-from .meta import Meta
+from .meta import TILE_SIZE
+
+BaseTile = namedtuple('BaseTile', 'tms_x tms_y zoom')
 
 
-class Tile(Meta):
-    def __init__(self, tms_x=None, tms_y=None, zoom=None):
-        super().__init__()
-        self._tms_x = tms_x
-        self._tms_y = tms_y
-        self._zoom = zoom
-
+class Tile(BaseTile):
     @classmethod
     def from_quad_tree(cls, quad_tree):
         """Creates a tile from a Microsoft QuadTree"""
@@ -28,57 +25,41 @@ class Tile(Meta):
         return cls(tms_x=tms_x, tms_y=tms_y, zoom=zoom)
 
     @classmethod
-    def from_google(cls, google_x, google_y, zoom=None):
+    def from_google(cls, google_x, google_y, zoom):
         """Creates a tile from Google format X Y and zoom"""
-        tile = cls(zoom=zoom)
-        tile.tms = (google_x, (2 ** tile.zoom - 1) - google_y)
-        return tile
+        return cls(tms_x=google_x, tms_y=(2 ** zoom - 1) - google_y, zoom=zoom)
 
     @classmethod
-    def for_point(cls, point, zoom=None):
+    def for_point(cls, point, zoom):
         """Creates a tile for given point"""
         latitude, longitude = point.latitude_longitude
         return cls.for_latitude_longitude(latitude=latitude, longitude=longitude, zoom=zoom)
 
     @classmethod
-    def for_pixels(cls, pixel_x, pixel_y, zoom=None):
+    def for_pixels(cls, pixel_x, pixel_y, zoom):
         """Creates a tile from pixels X Y Z (zoom) in pyramid"""
-        tile = cls(zoom=zoom)
-        tms_x = int(math.ceil(pixel_x / float(tile.tile_size)) - 1)
-        tms_y = int(math.ceil(pixel_y / float(tile.tile_size)) - 1)
-        tile.tms = tms_x, (2 ** tile.zoom - 1) - tms_y
-        return tile
+        tms_x = int(math.ceil(pixel_x / float(TILE_SIZE)) - 1)
+        tms_y = int(math.ceil(pixel_y / float(TILE_SIZE)) - 1)
+        return cls(tms_x=tms_x, tms_y=(2 ** zoom - 1) - tms_y, zoom=zoom)
 
     @classmethod
-    def for_meters(cls, meter_x, meter_y, zoom=None):
+    def for_meters(cls, meter_x, meter_y, zoom):
         """Creates a tile from X Y meters in Spherical Mercator EPSG:900913"""
-        tile = cls(zoom=zoom)
         point = Point.from_meters(meter_x=meter_x, meter_y=meter_y)
         pixel_x, pixel_y = point.pixels(zoom=zoom)
-        return tile.for_pixels(pixel_x=pixel_x, pixel_y=pixel_y, zoom=zoom)
+        return cls.for_pixels(pixel_x=pixel_x, pixel_y=pixel_y, zoom=zoom)
 
     @classmethod
-    def for_latitude_longitude(cls, latitude, longitude, zoom=None):
+    def for_latitude_longitude(cls, latitude, longitude, zoom):
         """Creates a tile from lat/lon in WGS84"""
-        tile = cls(zoom=zoom)
         point = Point.from_latitude_longitude(latitude=latitude, longitude=longitude)
-        pixel_x, pixel_y = point.pixels(zoom=tile.zoom)
-        return tile.for_pixels(pixel_x=pixel_x, pixel_y=pixel_y, zoom=zoom)
+        pixel_x, pixel_y = point.pixels(zoom=zoom)
+        return cls.for_pixels(pixel_x=pixel_x, pixel_y=pixel_y, zoom=zoom)
 
     @property
     def tms(self):
         """Gets the tile in pyramid from Tile Map Service (TMS)"""
-        return self._tms_x, self._tms_y
-
-    @tms.setter
-    def tms(self, value):
-        """Sets the tile in pyramid from Tile Map Service (TMS)"""
-        if type(value) is tuple:
-            tms_x, tms_y = value
-            self._tms_x = tms_x
-            self._tms_y = tms_y
-        else:
-            raise TypeError('Arguments of TMS needs to a tuple of X and Y!')
+        return self.tms_x, self.tms_y
 
     @property
     def quad_tree(self):
@@ -106,19 +87,9 @@ class Tile(Meta):
     def bounds(self):
         """Gets the bounds of a tile represented as the most west and south point and the most east and north point"""
         google_x, google_y = self.google
-        pixel_x_west, pixel_y_north = google_x * self.tile_size, google_y * self.tile_size
-        pixel_x_east, pixel_y_south = (google_x + 1) * self.tile_size, (google_y + 1) * self.tile_size
+        pixel_x_west, pixel_y_north = google_x * TILE_SIZE, google_y * TILE_SIZE
+        pixel_x_east, pixel_y_south = (google_x + 1) * TILE_SIZE, (google_y + 1) * TILE_SIZE
 
         point_min = Point.from_pixel(pixel_x=pixel_x_west, pixel_y=pixel_y_south, zoom=self.zoom)
         point_max = Point.from_pixel(pixel_x=pixel_x_east, pixel_y=pixel_y_north, zoom=self.zoom)
         return point_min, point_max
-
-    @property
-    def zoom(self):
-        if not self._zoom:
-            raise TypeError('Zoom is not set!')
-        return self._zoom
-
-    @zoom.setter
-    def zoom(self, zoom):
-        self._zoom = zoom
