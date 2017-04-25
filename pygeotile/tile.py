@@ -93,3 +93,6 @@ class Tile(BaseTile):
         point_min = Point.from_pixel(pixel_x=pixel_x_west, pixel_y=pixel_y_south, zoom=self.zoom)
         point_max = Point.from_pixel(pixel_x=pixel_x_east, pixel_y=pixel_y_north, zoom=self.zoom)
         return point_min, point_max
+
+
+__all__ = ['Tile']
