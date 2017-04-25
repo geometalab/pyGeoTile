@@ -18,5 +18,4 @@ deploy:
   password:
     secure: $PYPI_PASSWORD
   on:
-    tags: true
     branch: master
