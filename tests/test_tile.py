@@ -27,7 +27,6 @@ def test_from_google(tms, google, zoom):
     google_x, google_y = google
 
     tile = Tile.from_google(google_x=google_x, google_y=google_y, zoom=zoom)
-    print(tile.tms)
     assert tile.tms == tms
 
 
@@ -36,7 +35,6 @@ def test_from_google_tasmania():
     tms_tasmania = 1853, 758
 
     tile = Tile.from_google(google_x=google_x, google_y=google_y, zoom=11)
-    print(tile.tms)
     assert tile.tms == tms_tasmania
 
 
