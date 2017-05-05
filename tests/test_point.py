@@ -152,3 +152,18 @@ def test_no_assert_latitude(latitude):
     longitude = 10.0
     _ = Point.from_latitude_longitude(latitude=latitude, longitude=longitude)
     assert "No assertion raise :)"
+
+
+@pytest.mark.parametrize("pixel_x, zoom", [
+    (-10, 1),
+    (-0.1, 1),
+    (512.1, 1),
+    (1024.1, 2),
+])
+def test_assert_pixel_x(pixel_x, zoom):
+    pixel_y = 1
+
+    with pytest.raises(AssertionError) as assertion_info:
+        _ = Point.from_pixel(pixel_x=pixel_x, pixel_y=pixel_y, zoom=zoom)
+
+    assert 'Point X needs to be a value between 0 and (2^zoom) * 256.' in str(assertion_info.value)
