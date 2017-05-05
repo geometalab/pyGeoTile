@@ -88,3 +88,67 @@ def test_meters_to_pixels(meter_x, meter_y, expected):
 
     assert point.latitude_longitude == pytest.approx(expected, abs=0.1)
     assert point.meters == pytest.approx((meter_x, meter_y), abs=0.1)
+
+
+@pytest.mark.parametrize("longitude", [
+    -180.1,
+    -200,
+    -181,
+    181,
+    180.01,
+    200,
+])
+def test_assert_longitude(longitude):
+    latitude = 0.0
+
+    with pytest.raises(AssertionError) as assertion_info:
+        _ = Point.from_latitude_longitude(latitude=latitude, longitude=longitude)
+
+    assert 'Longitude needs to be a value between -180.0 and 180.0.' in str(assertion_info.value)
+
+
+@pytest.mark.parametrize("longitude", [
+    180,
+    -180,
+    180.0,
+    -180.0,
+    0,
+    0.0,
+    90,
+])
+def test_no_assert_longitude(longitude):
+    latitude = 10.0
+    _ = Point.from_latitude_longitude(latitude=latitude, longitude=longitude)
+    assert "No assertion raise :)"
+
+
+@pytest.mark.parametrize("latitude", [
+    -90.1,
+    -91,
+    90.1,
+    91,
+    200,
+    -200,
+])
+def test_assert_latitude(latitude):
+    longitude = 0.0
+
+    with pytest.raises(AssertionError) as assertion_info:
+        _ = Point.from_latitude_longitude(latitude=latitude, longitude=longitude)
+
+    assert 'Latitude needs to be a value between -90.0 and 90.0.' in str(assertion_info.value)
+
+
+@pytest.mark.parametrize("latitude", [
+    90,
+    -90,
+    90.0,
+    -90.0,
+    0,
+    0.0,
+    90,
+])
+def test_no_assert_latitude(latitude):
+    longitude = 10.0
+    _ = Point.from_latitude_longitude(latitude=latitude, longitude=longitude)
+    assert "No assertion raise :)"

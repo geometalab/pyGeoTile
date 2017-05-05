@@ -11,6 +11,8 @@ class Point(BasePoint):
     @classmethod
     def from_latitude_longitude(cls, latitude=0.0, longitude=0.0):
         """Creates a point from lat/lon in WGS84"""
+        assert -180.0 <= longitude <= 180.0, 'Longitude needs to be a value between -180.0 and 180.0.'
+        assert -90.0 <= latitude <= 90.0, 'Latitude needs to be a value between -90.0 and 90.0.'
         return cls(latitude=latitude, longitude=longitude)
 
     @classmethod
