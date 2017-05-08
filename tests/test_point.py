@@ -167,3 +167,42 @@ def test_assert_pixel_x(pixel_x, zoom):
         _ = Point.from_pixel(pixel_x=pixel_x, pixel_y=pixel_y, zoom=zoom)
 
     assert 'Point X needs to be a value between 0 and (2^zoom) * 256.' in str(assertion_info.value)
+
+
+@pytest.mark.parametrize("pixel_x, zoom", [
+    (10, 1),
+    (0.1, 1),
+    (512.0, 1),
+    (1024.0, 2),
+])
+def test_no_assert_pixel_x(pixel_x, zoom):
+    pixel_y = 10.0
+    _ = Point.from_pixel(pixel_x=pixel_x, pixel_y=pixel_y, zoom=zoom)
+    assert "No assertion raise :)"
+
+
+@pytest.mark.parametrize("pixel_y, zoom", [
+    (-10, 1),
+    (-0.1, 1),
+    (512.1, 1),
+    (1024.1, 2),
+])
+def test_assert_pixel_y(pixel_y, zoom):
+    pixel_x = 1
+
+    with pytest.raises(AssertionError) as assertion_info:
+        _ = Point.from_pixel(pixel_x=pixel_x, pixel_y=pixel_y, zoom=zoom)
+
+    assert 'Point Y needs to be a value between 0 and (2^zoom) * 256.' in str(assertion_info.value)
+
+
+@pytest.mark.parametrize("pixel_y, zoom", [
+    (10, 1),
+    (0.1, 1),
+    (512.0, 1),
+    (1024.0, 2),
+])
+def test_no_assert_pixel_y(pixel_y, zoom):
+    pixel_x = 10.0
+    _ = Point.from_pixel(pixel_x=pixel_x, pixel_y=pixel_y, zoom=zoom)
+    assert "No assertion raise :)"

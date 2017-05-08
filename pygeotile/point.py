@@ -18,8 +18,9 @@ class Point(BasePoint):
     @classmethod
     def from_pixel(cls, pixel_x=0, pixel_y=0, zoom=None):
         """Creates a point from pixels X Y Z (zoom) in pyramid"""
-        assert 0 <= pixel_x <= (2**zoom) * TILE_SIZE, 'Point X needs to be a value between 0 and (2^zoom) * 256.'
-        assert 0 <= pixel_y <= (2**zoom) * TILE_SIZE, 'Point Y needs to be a value between 0 and (2^zoom) * 256.'
+        max_pixel = (2 ** zoom) * TILE_SIZE
+        assert 0 <= pixel_x <= max_pixel, 'Point X needs to be a value between 0 and (2^zoom) * 256.'
+        assert 0 <= pixel_y <= max_pixel, 'Point Y needs to be a value between 0 and (2^zoom) * 256.'
         meter_x = pixel_x * resolution(zoom) - ORIGIN_SHIFT
         meter_y = pixel_y * resolution(zoom) - ORIGIN_SHIFT
         meter_x, meter_y = cls._sign_meters(meters=(meter_x, meter_y), pixels=(pixel_x, pixel_y), zoom=zoom)
