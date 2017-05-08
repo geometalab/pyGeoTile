@@ -24,6 +24,9 @@ class Tile(BaseTile):
     @classmethod
     def from_tms(cls, tms_x, tms_y, zoom):
         """Creates a tile from Tile Map Service (TMS) X Y and zoom"""
+        max_tile = (2 ** zoom) - 1
+        assert 0 <= tms_x <= max_tile, 'TMS X needs to be a value between 0 and (2^zoom) -1.'
+        assert 0 <= tms_y <= max_tile, 'TMS Y needs to be a value between 0 and (2^zoom) -1.'
         return cls(tms_x=tms_x, tms_y=tms_y, zoom=zoom)
 
     @classmethod
