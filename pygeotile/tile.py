@@ -1,4 +1,5 @@
 import math
+import re
 from functools import reduce
 from collections import namedtuple
 
@@ -14,6 +15,7 @@ class Tile(BaseTile):
     @classmethod
     def from_quad_tree(cls, quad_tree):
         """Creates a tile from a Microsoft QuadTree"""
+        assert bool(re.match('^[0-3]*$', quad_tree)), 'QuadTree value can only consists of the digits 0, 1, 2 and 3.'
         zoom = len(str(quad_tree))
         offset = int(math.pow(2, zoom)) - 1
         google_x, google_y = [reduce(lambda result, bit: (result << 1) | bit, bits, 0)
@@ -24,11 +26,17 @@ class Tile(BaseTile):
     @classmethod
     def from_tms(cls, tms_x, tms_y, zoom):
         """Creates a tile from Tile Map Service (TMS) X Y and zoom"""
+        max_tile = (2 ** zoom) - 1
+        assert 0 <= tms_x <= max_tile, 'TMS X needs to be a value between 0 and (2^zoom) -1.'
+        assert 0 <= tms_y <= max_tile, 'TMS Y needs to be a value between 0 and (2^zoom) -1.'
         return cls(tms_x=tms_x, tms_y=tms_y, zoom=zoom)
 
     @classmethod
     def from_google(cls, google_x, google_y, zoom):
         """Creates a tile from Google format X Y and zoom"""
+        max_tile = (2 ** zoom) - 1
+        assert 0 <= google_x <= max_tile, 'Google X needs to be a value between 0 and (2^zoom) -1.'
+        assert 0 <= google_y <= max_tile, 'Google Y needs to be a value between 0 and (2^zoom) -1.'
         return cls(tms_x=google_x, tms_y=(2 ** zoom - 1) - google_y, zoom=zoom)
 
     @classmethod

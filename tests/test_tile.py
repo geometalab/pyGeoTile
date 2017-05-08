@@ -117,3 +117,89 @@ def test_for_point(chicago_latitude_longitude, chicago_zoom, chicago_tms):
 
     assert tile.tms == chicago_tms
     assert tile.zoom == chicago_zoom
+
+
+assert_tms = [(-1, 2), (-5, 2), (4, 2), (10, 2)]
+no_assert_tms = [(0, 2), (1, 2), (2, 2), (3, 2)]
+
+
+@pytest.mark.parametrize("tms_x, zoom", assert_tms)
+def test_assert_tms_x(tms_x, zoom):
+    tms_y = 0
+
+    with pytest.raises(AssertionError) as assertion_info:
+        _ = Tile.from_tms(tms_x=tms_x, tms_y=tms_y, zoom=zoom)
+
+    assert 'TMS X needs to be a value between 0 and (2^zoom) -1.' in str(assertion_info.value)
+
+
+@pytest.mark.parametrize("tms_x, zoom", no_assert_tms)
+def test_no_assert_tms_x(tms_x, zoom):
+    tms_y = 0
+    _ = Tile.from_tms(tms_x=tms_x, tms_y=tms_y, zoom=zoom)
+    assert "No assertion raise :)"
+
+
+@pytest.mark.parametrize("tms_y, zoom", assert_tms)
+def test_assert_tms_y(tms_y, zoom):
+    tms_x = 0
+
+    with pytest.raises(AssertionError) as assertion_info:
+        _ = Tile.from_tms(tms_x=tms_x, tms_y=tms_y, zoom=zoom)
+
+    assert 'TMS Y needs to be a value between 0 and (2^zoom) -1.' in str(assertion_info.value)
+
+
+@pytest.mark.parametrize("tms_y, zoom", no_assert_tms)
+def test_no_assert_tms_y(tms_y, zoom):
+    tms_x = 0
+    _ = Tile.from_tms(tms_x=tms_x, tms_y=tms_y, zoom=zoom)
+    assert "No assertion raise :)"
+
+
+@pytest.mark.parametrize("google_x, zoom", assert_tms)
+def test_assert_google_x(google_x, zoom):
+    google_y = 0
+
+    with pytest.raises(AssertionError) as assertion_info:
+        _ = Tile.from_google(google_x=google_x, google_y=google_y, zoom=zoom)
+
+    assert 'Google X needs to be a value between 0 and (2^zoom) -1.' in str(assertion_info.value)
+
+
+@pytest.mark.parametrize("google_x, zoom", no_assert_tms)
+def test_no_assert_google_x(google_x, zoom):
+    google_y = 0
+    _ = Tile.from_google(google_x=google_x, google_y=google_y, zoom=zoom)
+    assert "No assertion raise :)"
+
+
+@pytest.mark.parametrize("google_y, zoom", assert_tms)
+def test_assert_google_y(google_y, zoom):
+    google_x = 0
+
+    with pytest.raises(AssertionError) as assertion_info:
+        _ = Tile.from_google(google_x=google_x, google_y=google_y, zoom=zoom)
+
+    assert 'Google Y needs to be a value between 0 and (2^zoom) -1.' in str(assertion_info.value)
+
+
+@pytest.mark.parametrize("google_y, zoom", no_assert_tms)
+def test_no_assert_google_y(google_y, zoom):
+    google_x = 0
+    _ = Tile.from_google(google_x=google_x, google_y=google_y, zoom=zoom)
+    assert "No assertion raise :)"
+
+
+@pytest.mark.parametrize("quad_tree", ['-1', '1235', 'aba', '9988'])
+def test_assert_quad_tree(quad_tree):
+    with pytest.raises(AssertionError) as assertion_info:
+        _ = Tile.from_quad_tree(quad_tree=quad_tree)
+
+    assert 'QuadTree value can only consists of the digits 0, 1, 2 and 3.' in str(assertion_info.value)
+
+
+@pytest.mark.parametrize("quad_tree", ['1', '0123', '1231230', '00012'])
+def test_no_assert_quad_tree(quad_tree):
+    _ = Tile.from_quad_tree(quad_tree=quad_tree)
+    assert "No assertion raise :)"
