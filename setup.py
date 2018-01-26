@@ -5,7 +5,7 @@ with open('README.rst', 'r', encoding='utf8') as f:
 
 setup(
     name='pyGeoTile',
-    version='1.0.1',
+    version='1.0.3',
     description='Python package to handle tiles and points of different projections, in particular WGS 84 '
                 '(Latitude, Longitude), Spherical Mercator (Meters), Pixel Pyramid and Tiles (TMS, Google, QuadTree)',
     long_description=readme,
