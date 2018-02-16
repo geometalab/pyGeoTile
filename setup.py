@@ -1,11 +1,12 @@
+from io import open
 from setuptools import setup, find_packages
 
-with open('README.rst', 'r', encoding='utf8') as f:
-    readme = f.read()
+with open('README.rst', 'rb') as f:
+    readme = f.read().decode('utf-8')
 
 setup(
     name='pyGeoTile',
-    version='1.0.3',
+    version='1.0.4',
     description='Python package to handle tiles and points of different projections, in particular WGS 84 '
                 '(Latitude, Longitude), Spherical Mercator (Meters), Pixel Pyramid and Tiles (TMS, Google, QuadTree)',
     long_description=readme,
