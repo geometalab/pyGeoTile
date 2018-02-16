@@ -39,7 +39,7 @@ To install pyGeoTile, simply:
 pip install pyGeoTile
 
 ```
-pyGeoTile officially supports Python 3.4, 3.5, 3.6, 3.7, 3.5-dev, 3.6-dev, 3.7-dev, nightly and PyPy3.
+pyGeoTile officially supports Python 2.7, 3.4, 3.5, 3.6, 3.7, 3.5-dev, 3.6-dev, 3.7-dev, nightly and PyPy3.
 
 ## Notes
 This repository is inspired by:
