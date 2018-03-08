@@ -47,3 +47,9 @@ This repository is inspired by:
  - Bing Maps Tile System: https://msdn.microsoft.com/en-us/library/bb259689.aspx
  - Showing pixel and tile coordinates: https://developers.google.com/maps/documentation/javascript/examples/map-coordinates?hl=de
  - Mercantile: https://github.com/mapbox/mercantile
+ 
+## Example usage
+An example usage of the pyGeoTile library is the tool [GeoDex](https://github.com/developmentseed/geodex).
+It is able to find all geospatial tile indices contained in an arbitrary boundary at an arbitrary zoom.
+
+We are happy to hear about other projects which are using pyGeoTile and we would like to mention them. So don't hesitate to contact us.
