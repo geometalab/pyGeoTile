@@ -52,4 +52,6 @@ This repository is inspired by:
 An example usage of the pyGeoTile library is the tool [GeoDex](https://github.com/developmentseed/geodex).
 It is able to find all geospatial tile indices contained in an arbitrary boundary at an arbitrary zoom.
 
+Further a C++ port is available [cppGeoTile](https://github.com/Murthy10/cppGeoTile).
+
 We are happy to hear about other projects which are using pyGeoTile and we would like to mention them. So don't hesitate to contact us.
